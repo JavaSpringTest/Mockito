@@ -5,9 +5,11 @@ import org.angelfg.repositories.ExamenRepository;
 import org.angelfg.repositories.PreguntaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+// import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class) // Habilitamos las anotaciones de inyeccion de mocks
 class ExamenServiceImplTest {
 
     @Mock // Generar mock para no integrar instancia
@@ -33,7 +36,7 @@ class ExamenServiceImplTest {
     @BeforeEach
     void setUp() {
         // Manejar inyeccion de depednencias
-        MockitoAnnotations.openMocks(this); // Habilitamos las anotaciones de inyeccion de mocks
+        // MockitoAnnotations.openMocks(this); // Habilitamos las anotaciones de inyeccion de mocks
 
         // con mock nunca se llama el metodo real, si no se genera un mock
 //        this.repository = mock(ExamenRepository.class);
