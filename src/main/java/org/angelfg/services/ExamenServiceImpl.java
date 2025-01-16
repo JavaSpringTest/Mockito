@@ -2,15 +2,22 @@ package org.angelfg.services;
 
 import org.angelfg.models.Examen;
 import org.angelfg.repositories.ExamenRepository;
+import org.angelfg.repositories.PreguntaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ExamenServiceImpl implements ExamenService {
 
-    private ExamenRepository examenRepository;
+    private final ExamenRepository examenRepository;
+    private final PreguntaRepository preguntaRepository;
 
-    public ExamenServiceImpl(ExamenRepository examenRepository) {
+    public ExamenServiceImpl(
+        ExamenRepository examenRepository,
+        PreguntaRepository preguntaRepository
+    ) {
         this.examenRepository = examenRepository;
+        this.preguntaRepository = preguntaRepository;
     }
 
     @Override
@@ -27,6 +34,20 @@ public class ExamenServiceImpl implements ExamenService {
 //            examen = examenOptional.orElseThrow();
 //        }
 //        return examen;
+    }
+
+    @Override
+    public Examen findExamenPorNombreConPreguntas(String nombre) {
+        Optional<Examen> examenOptional = findExamenPorNombre(nombre);
+
+        Examen examen = null;
+        if (examenOptional.isPresent()) {
+            examen = examenOptional.orElseThrow();
+            List<String> preguntas = this.preguntaRepository.findPreguntasPorExamenId(examen.getId());
+            examen.setPreguntas(preguntas);
+        }
+
+        return examen;
     }
 
 }
