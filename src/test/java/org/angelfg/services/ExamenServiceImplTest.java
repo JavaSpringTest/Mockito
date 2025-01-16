@@ -6,13 +6,16 @@ import org.angelfg.repositories.PreguntaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.angelfg.services.Datos.EXAMENES;
+import static org.angelfg.services.Datos.PREGUNTAS;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ExamenServiceImplTest {
 
@@ -31,13 +34,7 @@ class ExamenServiceImplTest {
     @Test
     void findExamenPorNombre() {
 
-        List<Examen> datos = Arrays.asList(
-                new Examen(5L, "Matemáticas"),
-                new Examen(6L, "Lenguaje"),
-                new Examen(7L, "Historia")
-        );
-
-        when(this.repository.findAll()).thenReturn(datos);
+        when(this.repository.findAll()).thenReturn(EXAMENES);
 
         Optional<Examen> examen = this.service.findExamenPorNombre("Matemáticas");
 
@@ -55,6 +52,18 @@ class ExamenServiceImplTest {
         Optional<Examen> examen = this.service.findExamenPorNombre("Matemáticas");
 
         assertFalse(examen.isPresent());
+    }
+
+    @Test
+    void testPreguntasExamen() {
+        when(repository.findAll()).thenReturn(EXAMENES);
+        // Era 5, se pone anyLong() para tener cualquier long generico
+        when(preguntaRepository.findPreguntasPorExamenId(anyLong())).thenReturn(PREGUNTAS);
+
+        Examen examen = this.service.findExamenPorNombreConPreguntas("Matemáticas");
+
+        assertEquals(5, examen.getPreguntas().size());
+        assertTrue(examen.getPreguntas().contains("Aritmética"));
     }
 
 }
