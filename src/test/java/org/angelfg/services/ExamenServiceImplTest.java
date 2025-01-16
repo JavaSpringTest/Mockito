@@ -161,4 +161,38 @@ class ExamenServiceImplTest {
         verify(preguntaRepository).guardarVarias(anyList()); // no se invoca
     }
 
+    @Test
+    void testManejoException() {
+        when(repository.findAll()).thenReturn(EXAMENES);
+        when(preguntaRepository.findPreguntasPorExamenId(anyLong()))
+                .thenThrow(IllegalArgumentException.class);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            this.service.findExamenPorNombreConPreguntas("Matemáticas");
+        });
+
+        assertEquals(IllegalArgumentException.class, exception.getClass());
+
+        verify(repository).findAll();
+        verify(preguntaRepository).findPreguntasPorExamenId(anyLong());
+    }
+
+    @Test
+    void testManejoExceptionConNull() {
+        when(repository.findAll()).thenReturn(EXAMENES_ID_NULL);
+
+        // Al vez de utilizar null, usar isNull()
+        when(preguntaRepository.findPreguntasPorExamenId(isNull()))
+                .thenThrow(IllegalArgumentException.class);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            this.service.findExamenPorNombreConPreguntas("Matemáticas");
+        });
+
+        assertEquals(IllegalArgumentException.class, exception.getClass());
+
+        verify(repository).findAll();
+        verify(preguntaRepository).findPreguntasPorExamenId(isNull());
+    }
+
 }
