@@ -9,19 +9,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-// import org.mockito.MockitoAnnotations;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.angelfg.services.Datos.EXAMENES;
-import static org.angelfg.services.Datos.PREGUNTAS;
+import static org.angelfg.services.Datos.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class) // Habilitamos las anotaciones de inyeccion de mocks
+// @ExtendWith(MockitoExtension.class) // Habilitamos las anotaciones de inyeccion de mocks
 class ExamenServiceImplTest {
 
     @Mock // Generar mock para no integrar instancia
@@ -36,7 +35,7 @@ class ExamenServiceImplTest {
     @BeforeEach
     void setUp() {
         // Manejar inyeccion de depednencias
-        // MockitoAnnotations.openMocks(this); // Habilitamos las anotaciones de inyeccion de mocks
+         MockitoAnnotations.openMocks(this); // Habilitamos las anotaciones de inyeccion de mocks
 
         // con mock nunca se llama el metodo real, si no se genera un mock
 //        this.repository = mock(ExamenRepository.class);
@@ -107,6 +106,39 @@ class ExamenServiceImplTest {
         // Se verifica si se llama internamente los metodos
         verify(repository).findAll();
         // verify(preguntaRepository).findPreguntasPorExamenId(anyLong());
+    }
+
+    @Test
+    void testGuardarExamen() {
+        // Cualquier tipo de examen
+        when(repository.guardar(any(Examen.class))).thenReturn(EXAMEN);
+
+        Examen examen = this.service.guardar(EXAMEN);
+
+        assertNotNull(examen.getId());
+        assertEquals(8L, examen.getId());
+        assertEquals("Física", examen.getNombre());
+
+        verify(repository).guardar(any(Examen.class));
+        // verify(preguntaRepository).guardarVarias(anyList()); // no se invoca
+    }
+
+    @Test
+    void testGuardarExamenConPreguntas() {
+        Examen newExamen = EXAMEN;
+        newExamen.setPreguntas(PREGUNTAS);
+
+        // Cualquier tipo de examen
+        when(repository.guardar(any(Examen.class))).thenReturn(EXAMEN);
+
+        Examen examen = this.service.guardar(newExamen);
+
+        assertNotNull(examen.getId());
+        assertEquals(8L, examen.getId());
+        assertEquals("Física", examen.getNombre());
+
+        verify(repository).guardar(any(Examen.class));
+        verify(preguntaRepository).guardarVarias(anyList()); // no se invoca
     }
 
 }
