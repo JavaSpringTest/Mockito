@@ -5,6 +5,9 @@ import org.angelfg.repositories.ExamenRepository;
 import org.angelfg.repositories.PreguntaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,16 +21,24 @@ import static org.mockito.Mockito.*;
 
 class ExamenServiceImplTest {
 
+    @Mock // Generar mock para no integrar instancia
     private ExamenRepository repository;
-    private ExamenService service;
+
+    @Mock // Generar mock para no integrar instancia
     private PreguntaRepository preguntaRepository;
+
+    @InjectMocks // Aqui es donde se inyectan los mocks
+    private ExamenServiceImpl service; // no integrar la interfaz, sino la implementacion del servicio
 
     @BeforeEach
     void setUp() {
+        // Manejar inyeccion de depednencias
+        MockitoAnnotations.openMocks(this); // Habilitamos las anotaciones de inyeccion de mocks
+
         // con mock nunca se llama el metodo real, si no se genera un mock
-        this.repository = mock(ExamenRepository.class);
-        this.preguntaRepository = mock(PreguntaRepository.class);
-        this.service = new ExamenServiceImpl(repository, preguntaRepository);
+//        this.repository = mock(ExamenRepository.class);
+//        this.preguntaRepository = mock(PreguntaRepository.class);
+//        this.service = new ExamenServiceImpl(repository, preguntaRepository);
     }
 
     @Test
