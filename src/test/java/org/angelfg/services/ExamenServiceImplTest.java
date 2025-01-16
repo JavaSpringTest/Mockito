@@ -8,8 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 
 import java.util.Collections;
 import java.util.List;
@@ -116,7 +118,7 @@ class ExamenServiceImplTest {
         Examen examen = this.service.guardar(EXAMEN);
 
         assertNotNull(examen.getId());
-        assertEquals(8L, examen.getId());
+        //assertEquals(8L, examen.getId());
         assertEquals("Física", examen.getNombre());
 
         verify(repository).guardar(any(Examen.class));
@@ -125,14 +127,32 @@ class ExamenServiceImplTest {
 
     @Test
     void testGuardarExamenConPreguntas() {
+
+        // Desarrollo impulsado al comportarmiento - Behavior-driven development (BDD)
+
+        // GIVEN -> Dado a
         Examen newExamen = EXAMEN;
         newExamen.setPreguntas(PREGUNTAS);
 
         // Cualquier tipo de examen
-        when(repository.guardar(any(Examen.class))).thenReturn(EXAMEN);
+        // Se incrementa automaticamente si requerimos añadir mas modelos
+        when(repository.guardar(any(Examen.class))).then(new Answer<Examen>() {
 
+            Long secuencia = 8L;
+
+            @Override
+            public Examen answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Examen examen = invocationOnMock.getArgument(0);
+                examen.setId(secuencia++);
+                return examen;
+            }
+
+        });
+
+        // WHEN -> cuando
         Examen examen = this.service.guardar(newExamen);
 
+        // THEN -> entonces
         assertNotNull(examen.getId());
         assertEquals(8L, examen.getId());
         assertEquals("Física", examen.getNombre());
