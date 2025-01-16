@@ -14,8 +14,7 @@ import static org.angelfg.services.Datos.EXAMENES;
 import static org.angelfg.services.Datos.PREGUNTAS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ExamenServiceImplTest {
 
@@ -64,6 +63,36 @@ class ExamenServiceImplTest {
 
         assertEquals(5, examen.getPreguntas().size());
         assertTrue(examen.getPreguntas().contains("Aritmética"));
+    }
+
+    @Test
+    void testPreguntasExamenVerify() {
+        when(repository.findAll()).thenReturn(EXAMENES);
+        // Era 5, se pone anyLong() para tener cualquier long generico
+        when(preguntaRepository.findPreguntasPorExamenId(anyLong())).thenReturn(PREGUNTAS);
+
+        Examen examen = this.service.findExamenPorNombreConPreguntas("Matemáticas");
+
+        assertEquals(5, examen.getPreguntas().size());
+        assertTrue(examen.getPreguntas().contains("Aritmética"));
+
+        // Se verifica si se llama internamente los metodos
+        verify(repository).findAll();
+        verify(preguntaRepository).findPreguntasPorExamenId(anyLong());
+    }
+
+    @Test
+    void testNoExisteExamenVerify() {
+        when(repository.findAll()).thenReturn(Collections.emptyList());
+        when(preguntaRepository.findPreguntasPorExamenId(anyLong())).thenReturn(PREGUNTAS);
+
+        Examen examen = this.service.findExamenPorNombreConPreguntas("Matemáticas");
+
+        assertNull(examen);
+
+        // Se verifica si se llama internamente los metodos
+        verify(repository).findAll();
+        // verify(preguntaRepository).findPreguntasPorExamenId(anyLong());
     }
 
 }
